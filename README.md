@@ -1,6 +1,6 @@
 # Trae's Agent Plugins
 
-My plugins for Claude Code and Codex, published from this repository as a marketplace named `thelunchtrae`. Both hosts use the same skills, references and scripts, with their own manifests and hook configuration.
+My plugins, published from this repository as a marketplace named `thelunchtrae`. The plugins share skills, references and scripts, with separate manifests and hook configuration for each host.
 
 ## Install
 
@@ -48,7 +48,7 @@ To update the Git marketplace, run `codex plugin marketplace upgrade thelunchtra
 | Marketplace | `.claude-plugin/marketplace.json` | `.agents/plugins/marketplace.json` |
 | Plugin metadata | `plugins/<name>/.claude-plugin/plugin.json` | `plugins/<name>/.codex-plugin/plugin.json` |
 | Skills | Shared `skills/<name>/SKILL.md`; `/plugin:skill` | Same files; select with `$` or ask in plain words |
-| PR workflow hooks | `hooks/hooks.json`; automatic tracking of successful PR commands | `hooks/codex.json`; explicit `ready` and `closed` markers after verifying success |
+| PR workflow hooks | `hooks/hooks.json`; automatic tracking of successful PR commands | `hooks/codex.json`; standalone `draft` marker after creation and `ready` or `closed` markers after verifying success |
 | Audit verifier | Registered `state-machine-verifier` agent | General-purpose subagent given the same verifier instructions |
 
 The PR workflow's [README](plugins/draft-review-ready/README.md#codex) explains Codex's payload limits and state directory. The other plugins share their behavior across hosts. Node 18+ is needed for the PR hooks, the repo standards helper and the repository checks.
@@ -70,4 +70,4 @@ node --test
 
 For a local Codex smoke test before publishing, register this checkout with `codex plugin marketplace add /absolute/path/to/claude-plugins`, then install using the same plugin names. The test suite also exercises Codex discovery and installation in a temporary profile when the CLI is available, without changing your own installations.
 
-These are native Claude Code and Codex Git marketplace packages. Codex uses `.codex-plugin/plugin.json` deliberately: its current loader skips bundled hooks for a root Agent Plugins 1.0 `plugin.json`. A public OpenAI directory submission is a separate packaging and review process; pushing this repository doesn't submit a directory listing.
+These are native Git marketplace packages. Codex uses `.codex-plugin/plugin.json` deliberately: its current loader skips bundled hooks for a root Agent Plugins 1.0 `plugin.json`. A public OpenAI directory submission is a separate packaging and review process; pushing this repository doesn't submit a directory listing.

@@ -1,6 +1,6 @@
 # Trae's Skills
 
-I keep my own general-purpose skills in this Claude Code and Codex plugin, so they come with me to any session that has this marketplace. Skills that belong to one job live in that job's plugin instead; this one is for everything else. It has no hooks, agents or MCP servers, so installing it adds only the skills.
+I keep my own general-purpose skills in this plugin, so they come with me to any session that has this marketplace. Skills that belong to one job live in that job's plugin instead; this one is for everything else. It has no hooks, agents or MCP servers, so installing it adds only the skills.
 
 Install in Claude Code:
 

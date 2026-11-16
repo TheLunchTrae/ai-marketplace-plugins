@@ -43,7 +43,11 @@ echo "pr-workflow: closed <pr-url>"      # closed, merged, or handed to someone 
 
 ### Codex
 
-Use the same review loop and marker lines. After successfully marking a PR ready, print `echo "pr-workflow: ready <pr-url>"`; after confirming a merge, close or handoff, print `echo "pr-workflow: closed <pr-url>"`. Codex shell hooks don't provide an exit status, so the hook deliberately doesn't infer these transitions from a `gh` command. Only print the marker after verifying the operation succeeded, in a separate command or after `&&` in a shell that supports it.
+Use the same review loop and marker lines. Immediately after opening each PR, through any tool or integration, run `echo "pr-workflow: draft <pr-url>"` as a separate short shell command and wait for it to finish before starting a reviewer, checks watcher or other background work. Do this even when the hook already confirmed automatic tracking; a duplicate `draft` marker is harmless at this point.
+
+Run every marker in its own short command. Codex fires the shell hook only when the process completes and may pass only the final output chunk, so a URL or marker printed before a long-running command yields can be missed. Do not append checks watchers or other slow work to PR creation or marker commands.
+
+After verifying that a PR was successfully marked ready, run `echo "pr-workflow: ready <pr-url>"` in its own command; after confirming a merge, close or handoff, do the same with `echo "pr-workflow: closed <pr-url>"`. Codex shell hooks don't provide an exit status, so the hook deliberately doesn't infer these transitions from a `gh` command. Print the marker only after verifying the operation succeeded.
 
 Codex doesn't send Claude's background-task or scheduled-wakeup inventory to Stop hooks. Keep the reviewer in the foreground when possible; if it runs in the background, the hook may nudge once before `stop_hook_active` permits the handoff. If hooks aren't available or enabled in the host, follow the workflow yourself and say that automatic enforcement didn't run.
 

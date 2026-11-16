@@ -1,6 +1,6 @@
 # State Machine Audit
 
-I use this Claude Code and Codex plugin to audit a codebase for implicit state machines (state that no type names, spread over flags, status fields, optional values, caches, async work, timers, UI flows and files) and the failure states they can reach.
+I use this plugin to audit a codebase for implicit state machines (state that no type names, spread over flags, status fields, optional values, caches, async work, timers, UI flows and files) and the failure states they can reach.
 
 Install in Claude Code:
 

@@ -1,6 +1,6 @@
 # Draft-Review-Ready PR Workflow
 
-I use this Claude Code and Codex plugin for a strict pull request workflow: every PR opens as a draft, gets an independent reviewer agent with a fix and re-check loop, and is marked ready only after the reviewer approves. The reviewer also checks the state machines the diff adds or changes; for a full audit I use [State Machine Audit](../state-machine-audit). A Stop hook keeps the session from ending its turn while that loop is unfinished.
+I use this plugin for a strict pull request workflow: every PR opens as a draft, gets an independent reviewer agent with a fix and re-check loop, and is marked ready only after the reviewer approves. The reviewer also checks the state machines the diff adds or changes; for a full audit I use [State Machine Audit](../state-machine-audit). A Stop hook keeps the session from ending its turn while that loop is unfinished.
 
 Install in Claude Code:
 
@@ -22,13 +22,15 @@ codex plugin add draft-review-ready@thelunchtrae
 
 Use a Codex release with native plugin hooks and review their trust state in `/hooks`. Both hosts run the same script; `hooks/codex.json` selects Codex mode and uses its supported `PostToolUse`, `UserPromptSubmit` and `Stop` events. Its Windows commands use `%PLUGIN_ROOT%` for Codex's command shell.
 
-Codex sends shell output as plain text without an exit status. The hook tracks PR creation URLs, including a creation followed by a failed command, and reads explicit markers. It doesn't infer `ready`, `closed` or `reviewing` from shell state-changing commands: first verify the operation succeeded, then print the matching marker. For example, in a shell with `&&`:
+Codex sends shell output as plain text without an exit status. The hook can track PR creation URLs and reads explicit markers. Because hooks fire only at process completion and may receive only the final output chunk, a URL or marker printed before a long-running command yields can be lost. Immediately after opening each PR, run this as a separate short command and wait for it to finish before starting a reviewer or checks watcher, even if automatic tracking already confirmed the PR:
 
 ```sh
-gh pr ready <pr-url> && echo "pr-workflow: ready <pr-url>"
+echo "pr-workflow: draft <pr-url>"
 ```
 
-For GitHub integrations whose tool names or payloads the tracker doesn't recognize, start tracking with `echo "pr-workflow: draft <pr-url>"` and use the same markers for later transitions. Codex's Stop payload doesn't include Claude's background-task or scheduled-wakeup inventory, so those exceptions aren't detected there; `stop_hook_active` still prevents a nudge loop. When hooks are unavailable or disabled, the skill supplies the same review rules without automatic enforcement.
+Use a separate short command for every later marker too. The hook doesn't infer `ready`, `closed` or `reviewing` from shell state-changing commands: verify the operation succeeded, then run the matching marker by itself. For example, after confirming `gh pr ready <pr-url>` succeeded, run `echo "pr-workflow: ready <pr-url>"`. Do not append a checks watcher or other slow work to creation or marker commands.
+
+The explicit draft marker also covers GitHub integrations whose tool names or payloads the tracker doesn't recognize. Codex's Stop payload doesn't include Claude's background-task or scheduled-wakeup inventory, so those exceptions aren't detected there; `stop_hook_active` still prevents a nudge loop. When hooks are unavailable or disabled, the skill supplies the same review rules without automatic enforcement.
 
 ## Renamed from pr-workflow
 

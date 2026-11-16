@@ -44,6 +44,15 @@ test('Codex plain-text creation output is tracked, including a later shell failu
   assert.equal(stop({ session_id: 'unrelated-session' }), null);
 });
 
+test('a standalone draft marker recovers a creation URL consumed before exec completion', () => {
+  // The URL was emitted in an earlier exec output chunk, before a slow follow-up
+  // yielded. Codex sends no PostToolUse then; the eventual hook sees only this tail.
+  assert.equal(shell('gh pr create --draft && gh pr checks --watch', 'All checks passed.\n'), null);
+  const out = marker('draft');
+  assert.match(out.hookSpecificOutput.additionalContext, /recorded .* as draft/);
+  assert.equal(stop().decision, 'block');
+});
+
 test('Codex markers complete the review loop through exec_command and Bash', () => {
   shell('gh pr create --draft', `${pr}\n`, 'exec_command');
   marker('reviewing');
