@@ -1,15 +1,22 @@
 # Trae's Skills
 
-I keep my own general-purpose skills in this Claude Code plugin, so they come with me to any session that has this marketplace. Skills that belong to one job live in that job's plugin instead; this one is for everything else. It has no hooks, agents or MCP servers, so installing it adds only the skills.
+I keep my own general-purpose skills in this Claude Code and Codex plugin, so they come with me to any session that has this marketplace. Skills that belong to one job live in that job's plugin instead; this one is for everything else. It has no hooks, agents or MCP servers, so installing it adds only the skills.
 
-Install:
+Install in Claude Code:
 
 ```
 /plugin marketplace add TheLunchTrae/claude-plugins
 /plugin install my-skills@thelunchtrae
 ```
 
-Each skill runs when a request matches its description, or by name as `/my-skills:<skill-name>`.
+Install in Codex:
+
+```sh
+codex plugin marketplace add TheLunchTrae/claude-plugins
+codex plugin add my-skills@thelunchtrae
+```
+
+Each skill runs when a request matches its description, or by name as `/my-skills:<skill-name>` in Claude Code or `$my-skills:<skill-name>` in Codex.
 
 ## Adding a skill
 
@@ -24,14 +31,14 @@ Each skill runs when a request matches its description, or by name as `/my-skill
 
    # <Skill name>
 
-   The instructions Claude follows when the skill runs.
+   The instructions the agent follows when the skill runs.
    ```
 
-   `name` matches the folder name. Claude reads `description` to decide when to load the skill, so name the situations it's for.
-3. Put any files the skill needs (references, templates, scripts) in the same folder, and point to them from `SKILL.md` by relative path, or with `${CLAUDE_SKILL_DIR}` in a command.
+   `name` matches the folder name. Both hosts read `description` to decide when to load the skill, so name the situations it's for.
+3. Put any files the skill needs (references, templates, scripts) in the same folder, and link them from `SKILL.md` by relative path. For commands, tell the agent to resolve the script's absolute path from the loaded skill directory; don't depend on `${CLAUDE_SKILL_DIR}` or the user's current directory.
 4. Bump `version` in `.claude-plugin/plugin.json`. Installed copies only pick up changes when the version changes.
 5. List it under What's in it below.
-6. Check it with `claude plugin validate plugins/my-skills` from the repo root.
+6. Run `node scripts/sync-plugins.mjs`, `node scripts/sync-plugins.mjs --check` and `node --test` from the repo root. Commit the generated Codex metadata with the change. When Claude Code is available, also run `claude plugin validate plugins/my-skills`.
 
 ## What's in it
 

@@ -1,0 +1,22 @@
+{
+  "name": "my-skills",
+  "version": "0.2.1",
+  "description": "My general-purpose skills, in one plugin so they come with me to any session.",
+  "author": {
+    "name": "Trae Stevens"
+  },
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "personal"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Trae's Skills",
+    "shortDescription": "Trae's development skills",
+    "longDescription": "My general-purpose skills, in one plugin so they come with me to any session.",
+    "developerName": "Trae Stevens",
+    "category": "Developer Tools",
+    "capabilities": []
+  }
+}

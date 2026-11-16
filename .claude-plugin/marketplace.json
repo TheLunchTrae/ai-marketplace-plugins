@@ -1,7 +1,7 @@
 {
   "name": "thelunchtrae",
   "owner": { "name": "Trae Stevens" },
-  "metadata": { "description": "Trae's Claude Code plugins." },
+  "metadata": { "description": "Trae's plugins for Claude Code and Codex." },
   "plugins": [
     {
       "name": "draft-review-ready",

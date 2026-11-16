@@ -9,12 +9,12 @@ The baseline is the [KrishRVH/standards](https://github.com/KrishRVH/standards) 
 
 Repository settings, rulesets and branch protection are out of scope. Leave them alone, and don't tell the user to configure them as part of this work.
 
-The helper script needs Node 18 or later and no dependencies. Call it by its full path every time, because shell variables don't carry over between commands.
+The helper script needs Node 18 or later and no dependencies. Resolve `<skill-directory>` in the commands below to the absolute directory containing this `SKILL.md`, using the skill path supplied by the host. Call the script by that full path every time, because shell variables don't carry over between commands. Do not assume the current directory is the plugin or that a Claude-specific environment variable exists.
 
 ## 1. Look at the repo
 
 ```sh
-node "${CLAUDE_SKILL_DIR}/scripts/repo-standards.mjs" detect .
+node "<skill-directory>/scripts/repo-standards.mjs" detect .
 ```
 
 - Profiles with a marker file (`Cargo.toml`, `package.json` with a `tsconfig.json` or its own sources, `go.mod`, `pyproject.toml`, `Package.swift`, Gradle Kotlin files, `.sln`/`.slnx`/`.csproj`) apply. A profile found only in a subdirectory, such as C# in `desktop/` or TypeScript in `apps/setup/`, is applied there as `--profile csharp=desktop`.
@@ -37,7 +37,7 @@ git -C "$catalog" rev-parse --short HEAD
 Read its README's "Adoption Model" and the README of each profile you apply. Then run a dry run, check it, and apply:
 
 ```sh
-node "${CLAUDE_SKILL_DIR}/scripts/repo-standards.mjs" apply --catalog "$catalog" \
+node "<skill-directory>/scripts/repo-standards.mjs" apply --catalog "$catalog" \
   --profile ts --profile rust --package-manager <the repo's> --owner @handle --dry-run
 ```
 

@@ -6,8 +6,9 @@
 //   post-tool-use-failure  and the review state the agent reports with a marker line
 //   user-prompt-submit     a new prompt ends any "waiting" state
 //   stop                   block the end of a turn while a PR's review loop is unfinished
+// Add --host=codex for Codex's hook payloads and state directory.
 // CLI (debugging):
-//   status <session-id>
+//   status <session-id> [--host=codex]
 //
 // The agent reports review state by printing a marker line from its shell:
 //   echo "pr-workflow: <state> <pr-url> [reason]"
@@ -23,7 +24,8 @@ import { fileURLToPath } from 'node:url';
 
 export const STATES = ['draft', 'reviewing', 'approved', 'ready', 'waiting', 'closed'];
 export const BLOCKING = new Set(['draft', 'reviewing', 'approved']);
-const SHELL_TOOLS = new Set(['Bash', 'PowerShell']);
+const HOST = process.argv.includes('--host=codex') ? 'codex' : 'claude';
+const SHELL_TOOLS = new Set(['Bash', 'PowerShell', 'exec_command', 'shell', 'shell_command']);
 const PR_URL_G = /https?:\/\/([^\s"'<>\\/]+)\/([^\s"'<>\\/]+)\/([^\s"'<>\\/]+)\/pull\/(\d+)/g;
 const MARKER = /^pr-workflow:\s+(draft|reviewing|approved|ready|waiting|closed)\s+(\S+)(?:\s+(.+))?$/;
 // Background task types that finish and wake the session (Claude Code's labels, then raw names).
@@ -33,11 +35,12 @@ const CI_WATCH = /\bgh\s+(pr\s+checks\b.*--watch|run\s+watch\b)/;
 const PRUNE_DAYS = 30;
 
 // ---- state -----------------------------------------------------------------
-// One file per PR: ~/.claude/pr-workflow/sessions/<session-id>/<pr-key>.json.
+// One file per PR: <host-home>/pr-workflow/sessions/<session-id>/<pr-key>.json.
 // Not $CLAUDE_PLUGIN_DATA, so the location doesn't depend on which process computes it.
 
 function baseDir() {
-  return path.join(process.env.PR_WORKFLOW_STATE_DIR || path.join(os.homedir(), '.claude', 'pr-workflow'), 'sessions');
+  const hostHome = HOST === 'codex' ? process.env.CODEX_HOME || path.join(os.homedir(), '.codex') : path.join(os.homedir(), '.claude');
+  return path.join(process.env.PR_WORKFLOW_STATE_DIR || path.join(hostHome, 'pr-workflow'), 'sessions');
 }
 
 export function safeId(id) {
@@ -251,11 +254,12 @@ export function classify(input, failed = false) {
   const events = [];
 
   if (SHELL_TOOLS.has(tool)) {
-    const cmd = String(ti.command ?? '');
+    const cmd = String(ti.command ?? ti.cmd ?? '');
     if (!/\bgh\b|pr-workflow:/.test(cmd)) return events;
     const stdout = failed
       ? String(input.error ?? '')
-      : typeof input.tool_response?.stdout === 'string' ? input.tool_response.stdout : JSON.stringify(input.tool_response ?? '');
+      : typeof input.tool_response === 'string' ? input.tool_response
+        : typeof input.tool_response?.stdout === 'string' ? input.tool_response.stdout : JSON.stringify(input.tool_response ?? '');
 
     if (!failed && cmd.includes('pr-workflow:')) {
       for (const line of stdout.split(/\r?\n/)) {
@@ -276,7 +280,7 @@ export function classify(input, failed = false) {
       if (t[0] === 'pr' && (t[1] === 'create' || t[1] === 'new')) {
         const prs = linePrs(stdout);
         if (prs.length) events.push({ kind: 'opened', prs });
-      } else if (t[0] === 'pr' && ['ready', 'merge', 'close', 'reopen'].includes(t[1]) && !failed) {
+      } else if (t[0] === 'pr' && ['ready', 'merge', 'close', 'reopen'].includes(t[1]) && !failed && HOST !== 'codex') {
         const r = ghPrRef(t.slice(2));
         const state = t[1] === 'ready' ? (t.includes('--undo') ? 'reviewing' : 'ready') : t[1] === 'reopen' ? 'reviewing' : 'closed';
         events.push({ kind: 'set', state, ref: r });
@@ -289,7 +293,7 @@ export function classify(input, failed = false) {
           if (!prs.length) prs = linePrs(stdout); // --jq .html_url
           prs = prs.filter((x) => x.owner === p.owner && x.repo === p.repo);
           if (prs.length) events.push({ kind: 'opened', prs });
-        } else if (p.number !== null && !failed) {
+        } else if (p.number !== null && !failed && HOST !== 'codex') {
           const ref = { owner: p.owner, repo: p.repo, number: p.number };
           if (p.rest === '/ccr/ready_for_review') events.push({ kind: 'set', state: 'ready', ref });
           else if (p.rest === '/ccr/convert_to_draft') events.push({ kind: 'set', state: 'reviewing', ref });
@@ -301,7 +305,9 @@ export function classify(input, failed = false) {
     return events;
   }
 
-  if (failed) return events;
+  // Codex shell hooks omit the command's exit code. Only creations (including partial
+  // failures) and explicit markers count there; never infer a successful state change.
+  if (failed || input.tool_response?.isError === true) return events;
   const owner = String(ti.owner ?? '').toLowerCase(), repo = String(ti.repo ?? '').toLowerCase();
   if (/^mcp__.*__create_pull_request$/.test(tool)) {
     let prs = htmlUrls(input.tool_response);

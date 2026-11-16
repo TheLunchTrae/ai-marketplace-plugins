@@ -1,15 +1,22 @@
 # State Machine Audit
 
-I use this Claude Code plugin to audit a codebase for implicit state machines (state that no type names, spread over flags, status fields, optional values, caches, async work, timers, UI flows and files) and the failure states they can reach.
+I use this Claude Code and Codex plugin to audit a codebase for implicit state machines (state that no type names, spread over flags, status fields, optional values, caches, async work, timers, UI flows and files) and the failure states they can reach.
 
-Install:
+Install in Claude Code:
 
 ```
 /plugin marketplace add TheLunchTrae/claude-plugins
 /plugin install state-machine-audit@thelunchtrae
 ```
 
-Then ask for it in plain words ("audit this repo for state machines and failure states") or run the skill with `/state-machine-audit:state-machine-audit`.
+Install in Codex:
+
+```sh
+codex plugin marketplace add TheLunchTrae/claude-plugins
+codex plugin add state-machine-audit@thelunchtrae
+```
+
+Then ask for it in plain words ("audit this repo for state machines and failure states") or run the skill with `/state-machine-audit:state-machine-audit` in Claude Code or `$state-machine-audit:state-machine-audit` in Codex. Claude Code registers the verifier as a plugin agent; Codex gives the same [verifier instructions](agents/state-machine-verifier.md) to a fresh general-purpose subagent. If subagents are unavailable, the skill records a separate self-check instead.
 
 ## What it does
 
