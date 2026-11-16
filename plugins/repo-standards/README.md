@@ -1,13 +1,22 @@
 # Repo Standards
 
-I use this Claude Code plugin to set up formatting, linting, tests and CI gates in a repository from the [KrishRVH/standards](https://github.com/KrishRVH/standards) catalog. It applies only the profiles the repo uses, with the changes I make to the catalog's defaults in my own repos.
+I use this plugin to set up formatting, linting, tests and CI gates in a repository from the [KrishRVH/standards](https://github.com/KrishRVH/standards) catalog. It applies only the profiles the repo uses, with the changes I make to the catalog's defaults in my own repos.
 
-Install:
+Install in Claude Code:
 
 ```
 /plugin marketplace add TheLunchTrae/claude-plugins
 /plugin install repo-standards@thelunchtrae
 ```
+
+Install in Codex:
+
+```sh
+codex plugin marketplace add TheLunchTrae/claude-plugins
+codex plugin add repo-standards@thelunchtrae
+```
+
+Ask to apply repo standards, or invoke `/repo-standards:repo-standards` in Claude Code or `$repo-standards:repo-standards` in Codex. The helper path is resolved from the loaded skill directory in either host.
 
 Requires Node 18 or later and git. Verifying the result needs [mise](https://mise.jdx.dev) and each profile's toolchain.
 
