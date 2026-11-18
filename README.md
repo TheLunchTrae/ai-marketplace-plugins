@@ -4,10 +4,23 @@ My plugins, published from this repository as a marketplace named `thelunchtrae`
 
 ## Install
 
+### Codex app
+
+Add `https://github.com/TheLunchTrae/ai-marketplace-plugins` as a marketplace in the app's Plugins settings. The marketplace appears as **Trae's Agent Plugins** (`thelunchtrae`). Install these four existing plugins to get all eight of my personal cloud skills:
+
+| Display name | Plugin ID | Included skills |
+| --- | --- | --- |
+| Draft-Review-Ready PR Workflow | `draft-review-ready` | PR workflow |
+| State Machine Audit | `state-machine-audit` | State machine audit |
+| Repo Standards | `repo-standards` | Repo standards |
+| Trae's Skills | `my-skills` | CI cleanup, dependency alerts, native UI conventions, PR merge hygiene, visual deliverables |
+
+The display names match my personal cloud plugins, and the existing plugin IDs stay the same. When moving from cloud installs, reinstall these plugins from the `thelunchtrae` marketplace, remove the old cloud installations, and start a new session so the skills and hooks load once. The repository's four plugins are the maintained source for these workflows.
+
 ### Claude Code
 
 ```
-/plugin marketplace add TheLunchTrae/claude-plugins
+/plugin marketplace add TheLunchTrae/ai-marketplace-plugins
 /plugin install draft-review-ready@thelunchtrae
 /plugin install state-machine-audit@thelunchtrae
 /plugin install repo-standards@thelunchtrae
@@ -20,10 +33,10 @@ Plugins update when their `version` in `plugin.json` changes. Turn on auto-updat
 
 ### Codex
 
-Use a Codex release with native plugin marketplace and hook support (`codex plugin --help`). The repository keeps its existing GitHub name so Claude installs continue to work.
+Use a Codex release with native plugin marketplace and hook support (`codex plugin --help`). The repository is now `ai-marketplace-plugins`; the marketplace name remains `thelunchtrae`.
 
 ```sh
-codex plugin marketplace add TheLunchTrae/claude-plugins
+codex plugin marketplace add TheLunchTrae/ai-marketplace-plugins
 codex plugin add draft-review-ready@thelunchtrae
 codex plugin add state-machine-audit@thelunchtrae
 codex plugin add repo-standards@thelunchtrae
@@ -55,7 +68,7 @@ The PR workflow's [README](plugins/draft-review-ready/README.md#codex) explains 
 
 ## Maintain and publish
 
-The existing Claude marketplace and plugin manifests remain the source of identity, versions, descriptions, author and license. Codex's marketplace and manifests are generated and committed, so users can install directly from Git without a build step:
+The existing Claude marketplace and plugin manifests remain the source of identity, versions, display names, descriptions, author and license. Codex's marketplace and manifests are generated and committed, so users can install directly from Git without a build step:
 
 ```sh
 node scripts/sync-plugins.mjs
@@ -68,6 +81,6 @@ node --test
 3. Run the commands above. When Claude Code is available, also run `claude plugin validate .` and `claude plugin validate plugins/<name>` for each changed plugin. CI checks metadata sync and runs the tests.
 4. Commit the source and generated metadata together, then push the reviewed changes to the repository's default branch. That publishes the same revision to both Git marketplaces; no repository rename or separate source copy is needed.
 
-For a local Codex smoke test before publishing, register this checkout with `codex plugin marketplace add /absolute/path/to/claude-plugins`, then install using the same plugin names. The test suite also exercises Codex discovery and installation in a temporary profile when the CLI is available, without changing your own installations.
+For a local Codex smoke test before publishing, register this checkout with `codex plugin marketplace add /absolute/path/to/ai-marketplace-plugins`, then install using the same plugin names. The test suite also exercises Codex discovery and installation in a temporary profile when the CLI is available, without changing your own installations.
 
 These are native Git marketplace packages. Codex uses `.codex-plugin/plugin.json` deliberately: its current loader skips bundled hooks for a root Agent Plugins 1.0 `plugin.json`. A public OpenAI directory submission is a separate packaging and review process; pushing this repository doesn't submit a directory listing.

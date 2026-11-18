@@ -5,14 +5,14 @@ I keep my own general-purpose skills in this plugin, so they come with me to any
 Install in Claude Code:
 
 ```
-/plugin marketplace add TheLunchTrae/claude-plugins
+/plugin marketplace add TheLunchTrae/ai-marketplace-plugins
 /plugin install my-skills@thelunchtrae
 ```
 
 Install in Codex:
 
 ```sh
-codex plugin marketplace add TheLunchTrae/claude-plugins
+codex plugin marketplace add TheLunchTrae/ai-marketplace-plugins
 codex plugin add my-skills@thelunchtrae
 ```
 

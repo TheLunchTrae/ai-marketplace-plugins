@@ -1,6 +1,6 @@
 {
   "name": "draft-review-ready",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Pull request workflow: draft first, independent reviewer loop, ready after approval, and a Stop hook that keeps sessions from ending a turn mid-review.",
   "author": {
     "name": "Trae Stevens"

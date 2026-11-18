@@ -47,6 +47,16 @@ test('both marketplaces expose every self-contained plugin with matching identit
   const directories = fs.readdirSync(path.join(root, 'plugins')).sort();
   assert.deepEqual(claude.plugins.map((p) => p.name).sort(), directories);
   assert.deepEqual(codex.plugins.map((p) => p.name).sort(), directories);
+  const personalPlugins = {
+    'draft-review-ready': { displayName: 'Draft-Review-Ready PR Workflow', skills: ['pr-workflow'] },
+    'state-machine-audit': { displayName: 'State Machine Audit', skills: ['state-machine-audit'] },
+    'repo-standards': { displayName: 'Repo Standards', skills: ['repo-standards'] },
+    'my-skills': {
+      displayName: "Trae's Skills",
+      skills: ['ci-cleanup', 'dependency-alerts', 'native-ui-conventions', 'pr-merge-hygiene', 'visual-deliverables'],
+    },
+  };
+  assert.deepEqual(directories, Object.keys(personalPlugins).sort());
   for (const entry of codex.plugins) {
     assert.equal(entry.source.source, 'local');
     const pluginRoot = path.join(root, entry.source.path);
@@ -55,6 +65,8 @@ test('both marketplaces expose every self-contained plugin with matching identit
     assert.equal(native.name, original.name);
     assert.equal(native.version, original.version);
     assert.equal(native.interface.displayName, original.displayName);
+    assert.equal(native.interface.displayName, personalPlugins[entry.name].displayName);
+    assert.deepEqual(fs.readdirSync(path.join(pluginRoot, native.skills)).sort(), personalPlugins[entry.name].skills);
     assert.ok(native.interface.shortDescription.length <= 30);
     assert.ok(fs.readdirSync(path.join(pluginRoot, native.skills)).some((skill) => fs.existsSync(path.join(pluginRoot, native.skills, skill, 'SKILL.md'))));
     assert.ok(!fs.existsSync(path.join(pluginRoot, 'plugin.json')), 'a portable root manifest would suppress native hook loading');

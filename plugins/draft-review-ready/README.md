@@ -1,11 +1,11 @@
 # Draft-Review-Ready PR Workflow
 
-I use this plugin for a strict pull request workflow: every PR opens as a draft, gets an independent reviewer agent with a fix and re-check loop, and is marked ready only after the reviewer approves. The reviewer also checks the state machines the diff adds or changes; for a full audit I use [State Machine Audit](../state-machine-audit). A Stop hook keeps the session from ending its turn while that loop is unfinished.
+I use this plugin for a strict pull request workflow: every PR opens as a draft, gets an independent reviewer agent with a fix and re-check loop, and is marked ready only after the reviewer approves. The reviewer also checks the state machines the diff adds or changes; for a full audit I use [State Machine Audit](https://github.com/TheLunchTrae/ai-marketplace-plugins/tree/main/plugins/state-machine-audit). A Stop hook keeps the session from ending its turn while that loop is unfinished.
 
 Install in Claude Code:
 
 ```
-/plugin marketplace add TheLunchTrae/claude-plugins
+/plugin marketplace add TheLunchTrae/ai-marketplace-plugins
 /plugin install draft-review-ready@thelunchtrae
 ```
 
@@ -16,7 +16,7 @@ Requires Node 18 or later on `PATH` (the hooks are one dependency-free Node scri
 ## Codex
 
 ```sh
-codex plugin marketplace add TheLunchTrae/claude-plugins
+codex plugin marketplace add TheLunchTrae/ai-marketplace-plugins
 codex plugin add draft-review-ready@thelunchtrae
 ```
 

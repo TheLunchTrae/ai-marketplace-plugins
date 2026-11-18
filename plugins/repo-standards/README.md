@@ -5,14 +5,14 @@ I use this plugin to set up formatting, linting, tests and CI gates in a reposit
 Install in Claude Code:
 
 ```
-/plugin marketplace add TheLunchTrae/claude-plugins
+/plugin marketplace add TheLunchTrae/ai-marketplace-plugins
 /plugin install repo-standards@thelunchtrae
 ```
 
 Install in Codex:
 
 ```sh
-codex plugin marketplace add TheLunchTrae/claude-plugins
+codex plugin marketplace add TheLunchTrae/ai-marketplace-plugins
 codex plugin add repo-standards@thelunchtrae
 ```
 
