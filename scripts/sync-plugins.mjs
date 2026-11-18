@@ -4,6 +4,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { syncBundle } from './sync-bundle.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
@@ -19,6 +20,7 @@ const presentation = {
   'state-machine-audit': 'Audit state machine failures',
   'repo-standards': 'Apply repository standards',
   'my-skills': "Trae's development skills",
+  'traes-agent-plugins': 'PR, audit, and repo workflows',
 };
 let stale = false;
 
@@ -51,7 +53,7 @@ const plugins = marketplace.plugins.map((entry) => {
   const manifest = {
     ...metadata,
     skills: './skills/',
-    ...(entry.name === 'draft-review-ready' ? { hooks: './hooks/codex.json' } : {}),
+    ...(['draft-review-ready', 'traes-agent-plugins'].includes(entry.name) ? { hooks: './hooks/codex.json' } : {}),
     interface: {
       displayName,
       shortDescription,
@@ -75,6 +77,8 @@ write('.agents/plugins/marketplace.json', {
   interface: { displayName: "Trae's Agent Plugins" },
   plugins,
 });
+
+if (syncBundle(root, marketplace, check) && check) stale = true;
 
 if (stale) {
   console.error('Run node scripts/sync-plugins.mjs and commit the generated files.');

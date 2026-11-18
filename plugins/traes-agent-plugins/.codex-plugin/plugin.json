@@ -1,0 +1,28 @@
+{
+  "author": {
+    "email": "trae.jks@gmail.com",
+    "name": "Trae Stevens"
+  },
+  "description": "Eight development skills for draft PR review, state machine audits, repository standards, CI cleanup, dependency updates, merge hygiene, native UI, and visual deliverables.",
+  "keywords": [
+    "pull-request",
+    "state-machines",
+    "standards",
+    "ci",
+    "skills"
+  ],
+  "license": "MIT",
+  "name": "traes-agent-plugins",
+  "repository": "https://github.com/TheLunchTrae/ai-marketplace-plugins",
+  "version": "0.1.1",
+  "skills": "./skills/",
+  "hooks": "./hooks/codex.json",
+  "interface": {
+    "displayName": "Trae's Agent Plugins",
+    "shortDescription": "PR, audit, and repo workflows",
+    "longDescription": "Eight development skills for draft PR review, state machine audits, repository standards, CI cleanup, dependency updates, merge hygiene, native UI, and visual deliverables.",
+    "developerName": "Trae Stevens",
+    "category": "Developer Tools",
+    "capabilities": []
+  }
+}

@@ -5,7 +5,7 @@ I use this plugin for a strict pull request workflow: every PR opens as a draft,
 Install in Claude Code:
 
 ```
-/plugin marketplace add TheLunchTrae/claude-plugins
+/plugin marketplace add TheLunchTrae/ai-marketplace-plugins
 /plugin install draft-review-ready@thelunchtrae
 ```
 
@@ -16,7 +16,7 @@ Requires Node 18 or later on `PATH` (the hooks are one dependency-free Node scri
 ## Codex
 
 ```sh
-codex plugin marketplace add TheLunchTrae/claude-plugins
+codex plugin marketplace add TheLunchTrae/ai-marketplace-plugins
 codex plugin add draft-review-ready@thelunchtrae
 ```
 

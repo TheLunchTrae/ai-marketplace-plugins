@@ -5,14 +5,14 @@ I use this plugin to audit a codebase for implicit state machines (state that no
 Install in Claude Code:
 
 ```
-/plugin marketplace add TheLunchTrae/claude-plugins
+/plugin marketplace add TheLunchTrae/ai-marketplace-plugins
 /plugin install state-machine-audit@thelunchtrae
 ```
 
 Install in Codex:
 
 ```sh
-codex plugin marketplace add TheLunchTrae/claude-plugins
+codex plugin marketplace add TheLunchTrae/ai-marketplace-plugins
 codex plugin add state-machine-audit@thelunchtrae
 ```
 

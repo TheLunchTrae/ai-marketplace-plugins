@@ -47,6 +47,13 @@ test('both marketplaces expose every self-contained plugin with matching identit
   const directories = fs.readdirSync(path.join(root, 'plugins')).sort();
   assert.deepEqual(claude.plugins.map((p) => p.name).sort(), directories);
   assert.deepEqual(codex.plugins.map((p) => p.name).sort(), directories);
+  const cloudDisplayNames = {
+    'traes-agent-plugins': "Trae's Agent Plugins",
+    'draft-review-ready': 'Draft-Review-Ready PR Workflow',
+    'state-machine-audit': 'State Machine Audit',
+    'repo-standards': 'Repo Standards',
+    'my-skills': "Trae's Skills",
+  };
   for (const entry of codex.plugins) {
     assert.equal(entry.source.source, 'local');
     const pluginRoot = path.join(root, entry.source.path);
@@ -55,6 +62,7 @@ test('both marketplaces expose every self-contained plugin with matching identit
     assert.equal(native.name, original.name);
     assert.equal(native.version, original.version);
     assert.equal(native.interface.displayName, original.displayName);
+    assert.equal(native.interface.displayName, cloudDisplayNames[entry.name]);
     assert.ok(native.interface.shortDescription.length <= 30);
     assert.ok(fs.readdirSync(path.join(pluginRoot, native.skills)).some((skill) => fs.existsSync(path.join(pluginRoot, native.skills, skill, 'SKILL.md'))));
     assert.ok(!fs.existsSync(path.join(pluginRoot, 'plugin.json')), 'a portable root manifest would suppress native hook loading');
@@ -72,6 +80,60 @@ test('both marketplaces expose every self-contained plugin with matching identit
       }
     }
   }
+});
+
+test('the bundle stays complete and check mode detects drift without rewriting files', (t) => {
+  const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'plugin bundle-'));
+  t.after(() => fs.rmSync(temp, { recursive: true, force: true }));
+  fs.cpSync(root, temp, { recursive: true, filter: (source) => path.basename(source) !== '.git' });
+  const bundle = path.join(temp, 'plugins/traes-agent-plugins');
+  const skills = fs.readdirSync(path.join(bundle, 'skills')).sort();
+  assert.deepEqual(skills, [
+    'ci-cleanup', 'dependency-alerts', 'native-ui-conventions', 'pr-merge-hygiene',
+    'pr-workflow', 'repo-standards', 'state-machine-audit', 'visual-deliverables',
+  ]);
+  const relative = 'skills/ci-cleanup/SKILL.md';
+  const source = path.join(temp, 'plugins/my-skills', relative);
+  const target = path.join(bundle, relative);
+  const original = fs.readFileSync(target, 'utf8');
+  fs.appendFileSync(source, '\nUpdated source guidance.\n');
+  const obsolete = path.join(bundle, 'skills/removed-skill/SKILL.md');
+  fs.mkdirSync(path.dirname(obsolete));
+  fs.writeFileSync(obsolete, 'obsolete');
+  let result = sync(temp, true);
+  assert.equal(result.status, 1, result.stderr);
+  assert.match(result.stderr, /Out of date: plugins\/traes-agent-plugins\/skills\/ci-cleanup\/SKILL.md/);
+  assert.match(result.stderr, /Obsolete bundle file/);
+  assert.equal(fs.readFileSync(target, 'utf8'), original);
+  assert.ok(fs.existsSync(obsolete));
+  const readme = fs.readFileSync(path.join(bundle, 'README.md'), 'utf8');
+  result = sync(temp);
+  assert.equal(result.status, 0, result.stderr);
+  assert.equal(fs.readFileSync(target, 'utf8'), fs.readFileSync(source, 'utf8'));
+  assert.ok(!fs.existsSync(path.dirname(obsolete)));
+  assert.equal(fs.readFileSync(path.join(bundle, 'README.md'), 'utf8'), readme);
+  assert.equal(sync(temp, true).status, 0);
+});
+
+test('bundle skill and guide links resolve within the installed package', () => {
+  const bundle = path.join(root, 'plugins/traes-agent-plugins');
+  function inspect(directory) {
+    for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
+      const file = path.join(directory, entry.name);
+      if (entry.isDirectory()) inspect(file);
+      else if (entry.name.endsWith('.md')) {
+        // Template examples contain placeholder links, not package references.
+        const text = fs.readFileSync(file, 'utf8').replace(/^```[^\n]*\n[\s\S]*?^```[^\n]*(?:\n|$)/gm, '');
+        for (const [, href] of text.matchAll(/\]\(([^\s)]+)\)/g)) {
+          if (href.startsWith('#') || href.includes('://') || href.startsWith('<')) continue;
+          const target = path.resolve(directory, href.split('#')[0]);
+          assert.ok(target.startsWith(`${bundle}${path.sep}`), `${file}: external package path ${href}`);
+          assert.ok(fs.existsSync(target), `${file}: missing ${href}`);
+        }
+      }
+    }
+  }
+  inspect(bundle);
 });
 
 const codexProbe = spawnSync('codex', ['--version'], { encoding: 'utf8', timeout: 5000 });
