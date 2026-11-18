@@ -1,18 +1,8 @@
 {
   "name": "thelunchtrae",
-  "owner": {
-    "name": "Trae Stevens"
-  },
-  "metadata": {
-    "description": "Trae's plugins."
-  },
+  "owner": { "name": "Trae Stevens" },
+  "metadata": { "description": "Trae's plugins." },
   "plugins": [
-    {
-      "name": "traes-agent-plugins",
-      "displayName": "Trae's Agent Plugins",
-      "source": "./plugins/traes-agent-plugins",
-      "description": "Eight development skills for draft PR review, state machine audits, repository standards, CI cleanup, dependency updates, merge hygiene, native UI, and visual deliverables."
-    },
     {
       "name": "draft-review-ready",
       "displayName": "Draft-Review-Ready PR Workflow",

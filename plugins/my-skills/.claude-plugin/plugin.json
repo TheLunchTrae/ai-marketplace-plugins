@@ -3,12 +3,7 @@
   "displayName": "Trae's Skills",
   "version": "0.2.2",
   "description": "My general-purpose skills, in one plugin so they come with me to any session.",
-  "author": {
-    "name": "Trae Stevens"
-  },
+  "author": { "name": "Trae Stevens" },
   "license": "MIT",
-  "keywords": [
-    "skills",
-    "personal"
-  ]
+  "keywords": ["skills", "personal"]
 }

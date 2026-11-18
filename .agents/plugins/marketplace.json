@@ -5,18 +5,6 @@
   },
   "plugins": [
     {
-      "name": "traes-agent-plugins",
-      "source": {
-        "source": "local",
-        "path": "./plugins/traes-agent-plugins"
-      },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_USE"
-      },
-      "category": "Developer Tools"
-    },
-    {
       "name": "draft-review-ready",
       "source": {
         "source": "local",

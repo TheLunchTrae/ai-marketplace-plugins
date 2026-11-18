@@ -3,15 +3,7 @@
   "displayName": "Repo Standards",
   "version": "0.1.3",
   "description": "Sets up formatting, linting, tests and CI gates in a repo from the KrishRVH/standards catalog, applying only the profiles the repo uses.",
-  "author": {
-    "name": "Trae Stevens"
-  },
+  "author": { "name": "Trae Stevens" },
   "license": "MIT",
-  "keywords": [
-    "standards",
-    "linting",
-    "mise",
-    "ci",
-    "bootstrap"
-  ]
+  "keywords": ["standards", "linting", "mise", "ci", "bootstrap"]
 }
